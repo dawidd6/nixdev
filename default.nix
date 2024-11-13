@@ -7,6 +7,7 @@ let
       lib,
       config,
       osConfig,
+      pkgs,
       ...
     }:
     {
@@ -18,6 +19,9 @@ let
       home-manager = {
         users.${user} = import ./home.nix;
         sharedModules = [ ({ home.stateVersion = lib.trivial.release; }) ];
+        extraSpecialArgs = {
+          inherit user;
+        };
         useUserPackages = true;
         useGlobalPkgs = true;
       };
@@ -27,6 +31,14 @@ let
         password = user;
         extraGroups = [ "wheel" ];
       };
+
+      environment.systemPackages = with pkgs; [
+        xterm # for resize command
+      ];
+      environment.loginShellInit = ''
+        # if terminal with stdout, fix terminal size
+        if [ -t 1 ]; then eval "$(resize)"; fi
+      '';
 
       services.getty.autologinUser = user;
       security.sudo.wheelNeedsPassword = false;
@@ -46,5 +58,8 @@ rec {
   default = nixosSystem.config.system.build.vm;
   nixosSystem = import /${nixpkgs}/nixos/lib/eval-config.nix {
     modules = [ module ];
+    specialArgs = {
+      inherit user;
+    };
   };
 }
