@@ -1,0 +1,24 @@
+name: nixpkgs-review
+
+on:
+  workflow_dispatch:
+    inputs:
+      pr:
+        description: PR number
+        type: string
+        required: true
+
+jobs:
+  pr:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          repository: NixOS/nixpkgs
+
+      - name: Install Nix
+        uses: cachix/install-nix-action@v30
+        
+      - name: Review PR
+        run: nix-shell -p nixpkgs-review --run "nixpkgs-review pr ${{ inputs.pr }}"
