@@ -23,4 +23,4 @@ jobs:
       - name: Review PR
         env:
           GITHUB_TOKEN: ${{ github.token }}
-        run: nix-shell -I nixpkgs="$PWD" -p nixpkgs-review --run "nixpkgs-review pr '${{ inputs.pr }}'"
+        run: nix-shell -I nixpkgs="$PWD" --pure --keep GITHUB_TOKEN -p nixpkgs-review --run "nixpkgs-review pr '${{ inputs.pr }}'"
