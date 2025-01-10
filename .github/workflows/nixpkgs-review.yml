@@ -19,8 +19,8 @@ jobs:
 
       - name: Install Nix
         uses: cachix/install-nix-action@v30
-        with:
-          nix_path: nixpkgs=channel:nixos-unstable
         
       - name: Review PR
-        run: nix-shell -p nixpkgs-review --run "nixpkgs-review pr ${{ inputs.pr }}"
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: nix-shell . -p nixpkgs-review --run "nixpkgs-review pr ${{ inputs.pr }}"
